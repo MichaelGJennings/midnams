@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE MIDINameDocument SYSTEM "midnam.dtd">
+
+<MIDINameDocument>
+	<Author>Generated from Alesis D4 Reference Charts</Author>
+	<MasterDeviceNames>
+		<Manufacturer>Alesis</Manufacturer>
+		<Model>D4</Model>
+		<CustomDeviceMode Name="Mode 1" >
+			<ChannelNameSetAssignments>
+				<ChannelNameSetAssign Channel="1" NameSet="Name Set 1" />
+				<ChannelNameSetAssign Channel="2" NameSet="Name Set 1" />
+				<ChannelNameSetAssign Channel="3" NameSet="Name Set 1" />
+				<ChannelNameSetAssign Channel="4" NameSet="Name Set 1" />
+				<ChannelNameSetAssign Channel="5" NameSet="Name Set 1" />
+				<ChannelNameSetAssign Channel="6" NameSet="Name Set 1" />
+				<ChannelNameSetAssign Channel="7" NameSet="Name Set 1" />
+				<ChannelNameSetAssign Channel="8" NameSet="Name Set 1" />
+				<ChannelNameSetAssign Channel="9" NameSet="Name Set 1" />
+				<ChannelNameSetAssign Channel="10" NameSet="Name Set 1" />
+				<ChannelNameSetAssign Channel="11" NameSet="Name Set 1" />
+				<ChannelNameSetAssign Channel="12" NameSet="Name Set 1" />
+				<ChannelNameSetAssign Channel="13" NameSet="Name Set 1" />
+				<ChannelNameSetAssign Channel="14" NameSet="Name Set 1" />
+				<ChannelNameSetAssign Channel="15" NameSet="Name Set 1" />
+				<ChannelNameSetAssign Channel="16" NameSet="Name Set 1" />
+			</ChannelNameSetAssignments>
+		</CustomDeviceMode>
+		<ChannelNameSet Name="Name Set 1" >
+
+			<AvailableForChannels>
+				<AvailableChannel Channel="1" Available="true" />
+				<AvailableChannel Channel="2" Available="true" />
+				<AvailableChannel Channel="3" Available="true" />
+				<AvailableChannel Channel="4" Available="true" />
+				<AvailableChannel Channel="5" Available="true" />
+				<AvailableChannel Channel="6" Available="true" />
+				<AvailableChannel Channel="7" Available="true" />
+				<AvailableChannel Channel="8" Available="true" />
+				<AvailableChannel Channel="9" Available="true" />
+				<AvailableChannel Channel="10" Available="true" />
+				<AvailableChannel Channel="11" Available="true" />
+				<AvailableChannel Channel="12" Available="true" />
+				<AvailableChannel Channel="13" Available="true" />
+				<AvailableChannel Channel="14" Available="true" />
+				<AvailableChannel Channel="15" Available="true" />
+				<AvailableChannel Channel="16" Available="true" />
+			</AvailableForChannels>
+			
+			<PatchBank Name="Factory Drumsets" >
+					<PatchNameList Name="Factory Drumsets" >
+			<Patch Number="0" Name="Standard Stuff" >
+				<PatchMIDICommands>
+					<ProgramChange Number="0" />
+				</PatchMIDICommands>
+				<UsesNoteNameList Name="Standard Stuff Notes" />
+			</Patch>
+			<Patch Number="1" Name="Articulation" >
+				<PatchMIDICommands>
+					<ProgramChange Number="1" />
+				</PatchMIDICommands>
+				<UsesNoteNameList Name="Articulation Notes" />
+			</Patch>
+			<Patch Number="2" Name="Classic Hex" >
+				<PatchMIDICommands>
+					<ProgramChange Number="2" />
+				</PatchMIDICommands>
+				<UsesNoteNameList Name="Classic Hex Notes" />
+			</Patch>
+			<Patch Number="3" Name="The Ballad Set" >
+				<PatchMIDICommands>
+					<ProgramChange Number="3" />
+				</PatchMIDICommands>
+				<UsesNoteNameList Name="The Ballad Set Notes" />
+			</Patch>
+			<Patch Number="4" Name="House Scratch" >
+				<PatchMIDICommands>
+					<ProgramChange Number="4" />
+				</PatchMIDICommands>
+				<UsesNoteNameList Name="House Scratch Notes" />
+			</Patch>
+			<Patch Number="5" Name="Dry Acoustic" >
+				<PatchMIDICommands>
+					<ProgramChange Number="5" />
+				</PatchMIDICommands>
+				<UsesNoteNameList Name="Dry Acoustic Notes" />
+			</Patch>
+			<Patch Number="6" Name="Jingles/Pop" >
+				<PatchMIDICommands>
+					<ProgramChange Number="6" />
+				</PatchMIDICommands>
+				<UsesNoteNameList Name="Jingles/Pop Notes" />
+			</Patch>
+			<Patch Number="7" Name="Ambient Rock" >
+				<PatchMIDICommands>
+					<ProgramChange Number="7" />
+				</PatchMIDICommands>
+				<UsesNoteNameList Name="Ambient Rock Notes" />
+			</Patch>
+			<Patch Number="8" Name="You Process 'Em" >
+				<PatchMIDICommands>
+					<ProgramChange Number="8" />
+				</PatchMIDICommands>
+				<UsesNoteNameList Name="You Process 'Em Notes" />
+			</Patch>
+			<Patch Number="9" Name="Assorted R&amp;B" >
+				<PatchMIDICommands>
+					<ProgramChange Number="9" />
+				</PatchMIDICommands>
+				<UsesNoteNameList Name="Assorted R&amp;B Notes" />
+			</Patch>
+			<Patch Number="10" Name="Jazz/Fusion" >
+				<PatchMIDICommands>
+					<ProgramChange Number="10" />
+				</PatchMIDICommands>
+				<UsesNoteNameList Name="Jazz/Fusion Notes" />
+			</Patch>
+			<Patch Number="11" Name="Country" >
+				<PatchMIDICommands>
+					<ProgramChange Number="11" />
+				</PatchMIDICommands>
+				<UsesNoteNameList Name="Country Notes" />
+			</Patch>
+			<Patch Number="12" Name="Cut, Copy, Paste" >
+				<PatchMIDICommands>
+					<ProgramChange Number="12" />
+				</PatchMIDICommands>
+				<UsesNoteNameList Name="Cut, Copy, Paste Notes" />
+			</Patch>
+			<Patch Number="13" Name="Aggressive" >
+				<PatchMIDICommands>
+					<ProgramChange Number="13" />
+				</PatchMIDICommands>
+				<UsesNoteNameList Name="Aggressive Notes" />
+			</Patch>
+			<Patch Number="14" Name="Techno-Logic" >
+				<PatchMIDICommands>
+					<ProgramChange Number="14" />
+				</PatchMIDICommands>
+				<UsesNoteNameList Name="Techno-Logic Notes" />
+			</Patch>
+			<Patch Number="15" Name="Hard &amp; Rockin'" >
+				<PatchMIDICommands>
+					<ProgramChange Number="15" />
+				</PatchMIDICommands>
+				<UsesNoteNameList Name="Hard &amp; Rockin' Notes" />
+			</Patch>
+			<Patch Number="16" Name="Industrial" >
+				<PatchMIDICommands>
+					<ProgramChange Number="16" />
+				</PatchMIDICommands>
+				<UsesNoteNameList Name="Industrial Notes" />
+			</Patch>
+			<Patch Number="17" Name="New World Perc" >
+				<PatchMIDICommands>
+					<ProgramChange Number="17" />
+				</PatchMIDICommands>
+				<UsesNoteNameList Name="New World Perc Notes" />
+			</Patch>
+			<Patch Number="18" Name="Chromatic #1" >
+				<PatchMIDICommands>
+					<ProgramChange Number="18" />
+				</PatchMIDICommands>
+				<UsesNoteNameList Name="Chromatic #1 Notes" />
+			</Patch>
+			<Patch Number="19" Name="Tribal Stuff" >
+				<PatchMIDICommands>
+					<ProgramChange Number="19" />
+				</PatchMIDICommands>
+				<UsesNoteNameList Name="Tribal Stuff Notes" />
+			</Patch>
+			<Patch Number="20" Name="Chromatic #2" >
+				<PatchMIDICommands>
+					<ProgramChange Number="20" />
+				</PatchMIDICommands>
+				<UsesNoteNameList Name="Chromatic #2 Notes" />
+			</Patch>
+		</PatchNameList>
+			</PatchBank>
+			
+			<NoteNameList Name="Standard Stuff Notes" >
+				<Note Number="36" Name="Big O" />
+				<Note Number="37" Name="Big Stik" />
+				<Note Number="38" Name="Raw Hide" />
+				<Note Number="39" Name="GtdClaps" />
+				<Note Number="40" Name="Torqued" />
+				<Note Number="41" Name="XLoCanon" />
+				<Note Number="42" Name="Aggressive" />
+				<Note Number="43" Name="LoCannon" />
+				<Note Number="44" Name="Wet Foot" />
+				<Note Number="45" Name="MdCannon" />
+				<Note Number="46" Name="WetRattl" />
+				<Note Number="47" Name="MdCannon" />
+				<Note Number="48" Name="HiCannon" />
+				<Note Number="49" Name="Hi Crash" />
+				<Note Number="50" Name="HiCannon" />
+				<Note Number="51" Name="Edg≥Bell" />
+				<Note Number="52" Name="20in China" />
+				<Note Number="53" Name="BellRide" />
+				<Note Number="54" Name="HardTamb" />
+				<Note Number="55" Name="10inSplash" />
+				<Note Number="56" Name="Holstein" />
+				<Note Number="57" Name="18inCrash" />
+				<Note Number="58" Name="Hi Vibra" />
+				<Note Number="59" Name="DarkRide" />
+				<Note Number="60" Name="Hi Bongo" />
+				<Note Number="61" Name="Low Bongo" />
+				<Note Number="62" Name="CngaSlap" />
+				<Note Number="63" Name="Hi Open" />
+				<Note Number="64" Name="Low Open" />
+				<Note Number="65" Name="HiTimble" />
+				<Note Number="66" Name="MidTimbl" />
+				<Note Number="67" Name="Hi Agogo" />
+				<Note Number="68" Name="Lo Agogo" />
+				<Note Number="69" Name="Cabasa" />
+				<Note Number="70" Name="LoMracas" />
+				<Note Number="71" Name="Scratch" />
+				<Note Number="72" Name="SloScrch" />
+				<Note Number="73" Name="Torpedo" />
+				<Note Number="74" Name="LoTorpdo" />
+				<Note Number="75" Name="MidSynth" />
+				<Note Number="76" Name="Hi Block" />
+				<Note Number="77" Name="Lo Block" />
+				<Note Number="78" Name="Marabasa" />
+				<Note Number="79" Name="Marabasa" />
+				<Note Number="80" Name="Triangle" />
+				<Note Number="81" Name="DinrBell" />
+				<Note Number="82" Name="Saucers?" />
+				<Note Number="83" Name="OddShake" />
+				<Note Number="84" Name="DoorSlam" />
+				<Note Number="85" Name="Lo Clave" />
+				<Note Number="86" Name="Puh!" />
+				<Note Number="87" Name="Hi Clave" />
+				<Note Number="88" Name="Puh-tooy" />
+				<Note Number="89" Name="ScrapeIt" />
+				<Note Number="90" Name="HiLipPop" />
+				<Note Number="91" Name="Broken" />
+				<Note Number="92" Name="Lip Pop" />
+				<Note Number="93" Name="Lo Muted" />
+				<Note Number="94" Name="LooseLip" />
+				<Note Number="95" Name="Md Muted" />
+				<Note Number="96" Name="Hi Muted" />
+			</NoteNameList>
+			<NoteNameList Name="Articulation Notes" >
+				<Note Number="36" Name="Slammin'" />
+				<Note Number="37" Name="Big Stik" />
+				<Note Number="38" Name="Rim\>Cntr" />
+				<Note Number="39" Name="HandClap" />
+				<Note Number="40" Name="Edged In" />
+				<Note Number="41" Name="16in Stark" />
+				<Note Number="42" Name="14in Thin" />
+				<Note Number="43" Name="16in Stark" />
+				<Note Number="44" Name="SoftFoot" />
+				<Note Number="45" Name="14in Stark" />
+				<Note Number="46" Name="Cls\>Open" />
+				<Note Number="47" Name="14in Stark" />
+				<Note Number="48" Name="10in Stark" />
+				<Note Number="49" Name="Medium" />
+				<Note Number="50" Name="10in Stark" />
+				<Note Number="51" Name="Edg\>Bell" />
+				<Note Number="52" Name="20in China" />
+				<Note Number="53" Name="DarRide" />
+				<Note Number="54" Name="HardTamb" />
+				<Note Number="55" Name="10in Splash" />
+				<Note Number="56" Name="Guernsey" />
+				<Note Number="57" Name="18in Crash" />
+				<Note Number="58" Name="Hi Vibra" />
+				<Note Number="59" Name="TheSwing" />
+				<Note Number="60" Name="Dynmic C" />
+				<Note Number="61" Name="Dynmic C" />
+				<Note Number="62" Name="Dynmic A" />
+				<Note Number="63" Name="Dynmic B" />
+				<Note Number="64" Name="Dynmic B" />
+				<Note Number="65" Name="HiTimble" />
+				<Note Number="66" Name="LoTimble" />
+				<Note Number="67" Name="Hi Agogo" />
+				<Note Number="68" Name="Lo Agogo" />
+				<Note Number="69" Name="OddShake" />
+				<Note Number="70" Name="LoMracas" />
+				<Note Number="71" Name="Scratch" />
+				<Note Number="72" Name="SloScrch" />
+				<Note Number="73" Name="Torpedo" />
+				<Note Number="74" Name="LoTorpdo" />
+				<Note Number="75" Name="Hi Clave" />
+				<Note Number="76" Name="Md Foley" />
+				<Note Number="77" Name="Lo Foley" />
+				<Note Number="78" Name="Marabasa" />
+				<Note Number="79" Name="Marabasa" />
+				<Note Number="80" Name="Triangle" />
+				<Note Number="81" Name="DinrBell" />
+				<Note Number="82" Name="Bamboo" />
+				<Note Number="83" Name="Anvil" />
+				<Note Number="84" Name="Hollow 1" />
+				<Note Number="85" Name="A Squib?" />
+				<Note Number="86" Name="Hollow 2" />
+				<Note Number="87" Name="A Squab?" />
+				<Note Number="88" Name="Hollow 3" />
+				<Note Number="89" Name="Hollow 4" />
+				<Note Number="90" Name="Hi Thang" />
+				<Note Number="91" Name="Hollow 5" />
+				<Note Number="92" Name="Thang" />
+				<Note Number="93" Name="Hollow 6" />
+				<Note Number="94" Name="Lo Thang" />
+				<Note Number="95" Name="Hollow 7" />
+				<Note Number="96" Name="Hollow 8" />
+			</NoteNameList>
+			<NoteNameList Name="Classic Hex Notes" >
+				<Note Number="36" Name="Lo Wisp" />
+				<Note Number="37" Name="TiteStik" />
+				<Note Number="38" Name="Electric" />
+				<Note Number="39" Name="GtdClaps" />
+				<Note Number="40" Name="Hi Elect" />
+				<Note Number="41" Name="Ol'Hex 3" />
+				<Note Number="42" Name="14in Thin" />
+				<Note Number="43" Name="Ol'Hex 3" />
+				<Note Number="44" Name="SoftFoot" />
+				<Note Number="45" Name="Ol'Hex 2" />
+				<Note Number="46" Name="Trashy" />
+				<Note Number="47" Name="Ol'Hex 2" />
+				<Note Number="48" Name="Ol'Hex 1" />
+				<Note Number="49" Name="Lo Crash" />
+				<Note Number="50" Name="Ol'Hex 1" />
+				<Note Number="51" Name="DarkRide" />
+				<Note Number="52" Name="20in China" />
+				<Note Number="53" Name="Edg\>Bell" />
+				<Note Number="54" Name="Tambrine" />
+				<Note Number="55" Name="10in Splash" />
+				<Note Number="56" Name="Md Cow" />
+				<Note Number="57" Name="Lft&amp;Rght" />
+				<Note Number="58" Name="Hi Vibra" />
+				<Note Number="59" Name="60'sFlng" />
+				<Note Number="60" Name="Hi Bongo" />
+				<Note Number="61" Name="LowBongo" />
+				<Note Number="62" Name="CngaSlap" />
+				<Note Number="63" Name="Hi Open" />
+				<Note Number="64" Name="Dynmic B" />
+				<Note Number="65" Name="HiTimble" />
+				<Note Number="66" Name="LoTimble" />
+				<Note Number="67" Name="Md Muted" />
+				<Note Number="68" Name="Lo Muted" />
+				<Note Number="69" Name="Cabasa" />
+				<Note Number="70" Name="Maracas" />
+				<Note Number="71" Name="HiLipPop" />
+				<Note Number="72" Name="LooseLip" />
+				<Note Number="73" Name="Far East" />
+				<Note Number="74" Name="Far West" />
+				<Note Number="75" Name="Hi Clave" />
+				<Note Number="76" Name="Hi Block" />
+				<Note Number="77" Name="Lo Block" />
+				<Note Number="78" Name="Hi Synth" />
+				<Note Number="79" Name="Lo Synth" />
+				<Note Number="80" Name="Triangle" />
+				<Note Number="81" Name="DinrBell" />
+				<Note Number="82" Name="HiReturn" />
+				<Note Number="83" Name="MdReturn" />
+				<Note Number="84" Name="LoWetWsp" />
+				<Note Number="85" Name="Gated" />
+				<Note Number="86" Name="WetEltrc" />
+				<Note Number="87" Name="GtdClaps" />
+				<Note Number="88" Name="HiWetLct" />
+				<Note Number="89" Name="Wet Hex3" />
+				<Note Number="90" Name="14in Tite" />
+				<Note Number="91" Name="Wet Hex3" />
+				<Note Number="92" Name="HardFoot" />
+				<Note Number="93" Name="Wet Hex2" />
+				<Note Number="94" Name="Rattle" />
+				<Note Number="95" Name="Wet Hex2" />
+				<Note Number="96" Name="Wet Hex1" />
+			</NoteNameList>
+			<NoteNameList Name="The Ballad Set Notes" >
+				<Note Number="36" Name="Ballad" />
+				<Note Number="37" Name="Stick" />
+				<Note Number="38" Name="BgBallad" />
+				<Note Number="39" Name="HandClap" />
+				<Note Number="40" Name="Fringe 2" />
+				<Note Number="41" Name="FloorWet" />
+				<Note Number="42" Name="14in Med" />
+				<Note Number="43" Name="FloorWet" />
+				<Note Number="44" Name="SoftFoot" />
+				<Note Number="45" Name="Mid Wet" />
+				<Note Number="46" Name="Rattle" />
+				<Note Number="47" Name="Mid Wet" />
+				<Note Number="48" Name="Hi Wet" />
+				<Note Number="49" Name="18in Crash" />
+				<Note Number="50" Name="Hi Wet" />
+				<Note Number="51" Name="TheSwing" />
+				<Note Number="52" Name="20in China" />
+				<Note Number="53" Name="Bell\>Edg" />
+				<Note Number="54" Name="DarkTamb" />
+				<Note Number="55" Name="10in Splash" />
+				<Note Number="56" Name="Holstein" />
+				<Note Number="57" Name="Hi Crash" />
+				<Note Number="58" Name="Hi Vibra" />
+			</NoteNameList>
+			<NoteNameList Name="House Scratch Notes" >
+				<Note Number="36" Name="Hi Foot" />
+				<Note Number="37" Name="A Squab?" />
+				<Note Number="38" Name="Flanger" />
+				<Note Number="39" Name="A Squib?" />
+			</NoteNameList>
+			<NoteNameList Name="Dry Acoustic Notes" >
+				<Note Number="36" Name="Fusion Kick" />
+			</NoteNameList>
+			<NoteNameList Name="Jingles/Pop Notes" >
+				<Note Number="36" Name="Timbale Kick" />
+			</NoteNameList>
+			<NoteNameList Name="Ambient Rock Notes" >
+				<Note Number="36" Name="Bass Drum" />
+			</NoteNameList>
+			<NoteNameList Name="You Process 'Em Notes" >
+				<Note Number="36" Name="Djembe Kick" />
+				<Note Number="37" Name="Side Stick" />
+
+			</NoteNameList>
+			<NoteNameList Name="Assorted R&amp;B Notes" >
+				<Note Number="36" Name="Dhol Kick" />
+
+			</NoteNameList>
+			<NoteNameList Name="Jazz/Fusion Notes" >
+				<Note Number="36" Name="Techno Kick" />
+
+			</NoteNameList>
+			<NoteNameList Name="Country Notes" >
+				<Note Number="36" Name="Hip Hop Kick" />
+
+			</NoteNameList>
+			<NoteNameList Name="Cut, Copy, Paste Notes" >
+				<Note Number="36" Name="Dance Kick" />
+
+			</NoteNameList>
+			<NoteNameList Name="Aggressive Notes" >
+				<Note Number="36" Name="Ambient Kick" />
+
+			</NoteNameList>
+			<NoteNameList Name="Industrial Notes" >
+				<Note Number="36" Name="Industrial Kick" />
+
+			</NoteNameList>
+			<NoteNameList Name="Hard &amp; Rockin' Notes" >
+				<Note Number="36" Name="Hard &amp; Rockin' Kick" />
+
+			</NoteNameList>
+			<NoteNameList Name="Industrial Notes" >
+				<Note Number="36" Name="Custom Kick 1" />
+
+			</NoteNameList>
+			<NoteNameList Name="New World Perc Notes" >
+				<Note Number="36" Name="Custom Kick 2" />
+
+			</NoteNameList>
+			<NoteNameList Name="Chromatic #1 Notes" >
+				<Note Number="36" Name="Custom Kick 3" />
+
+			</NoteNameList>
+			<NoteNameList Name="Tribal Stuff Notes" >
+				<Note Number="36" Name="Custom Kick 4" />
+
+			</NoteNameList>
+			<NoteNameList Name="Chromatic #2 Notes" >
+				<Note Number="36" Name="Custom Kick 5" />
+
+			</NoteNameList>
+		</ChannelNameSet>
+	</MasterDeviceNames>
+</MIDINameDocument>

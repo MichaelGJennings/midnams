@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DTD for MIDINameDocument -->
+<!ELEMENT MIDINameDocument (Author, MasterDeviceNames)>
+<!ATTLIST MIDINameDocument
+    xmlns CDATA #IMPLIED>
+
+<!ELEMENT Author (#PCDATA)>
+
+<!ELEMENT MasterDeviceNames (Manufacturer, Model, CustomDeviceMode+, ChannelNameSet+, (PatchNameList | NoteNameList)*)>
+<!ATTLIST MasterDeviceNames
+    xmlns CDATA #IMPLIED>
+
+<!ELEMENT Manufacturer (#PCDATA)>
+
+<!ELEMENT Model (#PCDATA)>
+
+<!ELEMENT CustomDeviceMode (ChannelNameSetAssignments)>
+<!ATTLIST CustomDeviceMode
+    Name CDATA #REQUIRED>
+
+<!ELEMENT ChannelNameSetAssignments (ChannelNameSetAssign+)>
+
+<!ELEMENT ChannelNameSetAssign EMPTY>
+<!ATTLIST ChannelNameSetAssign
+    Channel CDATA #REQUIRED
+    NameSet CDATA #REQUIRED>
+
+<!ELEMENT ChannelNameSet (AvailableForChannels, PatchBank+, NoteNameList*)>
+<!ATTLIST ChannelNameSet
+    Name CDATA #REQUIRED>
+
+<!ELEMENT AvailableForChannels (AvailableChannel+)>
+
+<!ELEMENT AvailableChannel EMPTY>
+<!ATTLIST AvailableChannel
+    Channel CDATA #REQUIRED
+    Available CDATA #REQUIRED>
+
+<!ELEMENT PatchBank (PatchNameList | UsesPatchNameList)>
+<!ATTLIST PatchBank
+    Name CDATA #REQUIRED>
+
+<!ELEMENT UsesPatchNameList EMPTY>
+<!ATTLIST UsesPatchNameList
+    Name CDATA #REQUIRED>
+
+<!ELEMENT UsesNoteNameList EMPTY>
+<!ATTLIST UsesNoteNameList
+    Name CDATA #REQUIRED>
+
+<!ELEMENT PatchNameList (Patch+)>
+<!ATTLIST PatchNameList
+    Name CDATA #IMPLIED>
+
+<!ELEMENT Patch (PatchMIDICommands | UsesNoteNameList)*>
+<!ATTLIST Patch
+    Number CDATA #IMPLIED
+    Name CDATA #IMPLIED
+    ProgramChange CDATA #IMPLIED>
+
+<!ELEMENT PatchMIDICommands (ProgramChange | ControlChange)*>
+
+<!ELEMENT ProgramChange EMPTY>
+<!ATTLIST ProgramChange
+    Number CDATA #REQUIRED>
+
+<!ELEMENT ControlChange EMPTY>
+<!ATTLIST ControlChange
+    Control CDATA #REQUIRED
+    Value CDATA #REQUIRED>
+
+<!ELEMENT NoteNameList (NoteGroup | Note)*>
+<!ATTLIST NoteNameList
+    Name CDATA #REQUIRED>
+
+<!ELEMENT NoteGroup (Note*)>
+<!ATTLIST NoteGroup
+    Name CDATA #REQUIRED>
+
+<!ELEMENT Note EMPTY>
+<!ATTLIST Note
+    Number CDATA #REQUIRED
+    Name CDATA #REQUIRED>
+
+<!ELEMENT NoteName EMPTY>
+<!ATTLIST NoteName
+    Number CDATA #REQUIRED
+    Name CDATA #REQUIRED>
