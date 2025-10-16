@@ -64,17 +64,29 @@
             align-items: center;
         }
         .notes-grid {
-            display: grid;
-            grid-template-columns: 80px 1fr auto auto;
-            gap: 10px;
+            display: flex;
+            flex-direction: column;
             padding: 20px;
+        }
+        .note-row {
+            display: grid;
+            grid-template-columns: 120px 1fr auto auto;
+            gap: 10px;
+            padding: 8px 0;
             align-items: center;
+        }
+        .grid-header-row {
+            display: grid;
+            grid-template-columns: 120px 1fr auto auto;
+            gap: 10px;
+            padding: 10px 0;
+            font-weight: bold;
+            color: #666;
+            border-bottom: 1px solid #eee;
         }
         .grid-header {
             font-weight: bold;
             color: #666;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
         }
         .note-input {
             position: relative;
@@ -114,6 +126,21 @@
             background: #f8f9fa;
             padding: 8px;
             border-radius: 4px;
+        }
+        .note-row.black-key {
+            background-color: #f0f0f0;
+        }
+        .note-row.black-key .note-number {
+            background: #e8e8e8;
+        }
+        .note-row.middle-c {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+        .note-row.middle-c .note-number {
+            background: #ffeaa7;
+            font-weight: bold;
+            color: #856404;
         }
         .delete-btn {
             background: #dc3545;
@@ -220,10 +247,12 @@
         </div>
         
         <div class="notes-grid" id="notes-grid">
-            <div class="grid-header">Number</div>
-            <div class="grid-header">Note Name</div>
-            <div class="grid-header">Delete</div>
-            <div class="grid-header">Add</div>
+            <div class="grid-header-row">
+                <div class="grid-header">Number (Note)</div>
+                <div class="grid-header">Note Name</div>
+                <div class="grid-header">Delete</div>
+                <div class="grid-header">Add</div>
+            </div>
         </div>
 
         <!-- Bottom controls and white space -->
@@ -332,8 +361,8 @@
             document.getElementById('note-count').textContent = `${notes.length} notes`;
             
             const grid = document.getElementById('notes-grid');
-            // Clear existing notes (keep headers)
-            while (grid.children.length > 4) {
+            // Clear existing notes (keep header row)
+            while (grid.children.length > 1) {
                 grid.removeChild(grid.lastChild);
             }
             
@@ -349,10 +378,11 @@
         function addNoteRow(number, name, index) {
             const grid = document.getElementById('notes-grid');
             
-            // Note number display
+            // Note number display with note name
             const numberDiv = document.createElement('div');
             numberDiv.className = 'note-number';
-            numberDiv.textContent = number;
+            const noteName = midiNoteToName(number);
+            numberDiv.textContent = `${number} (${noteName})`;
             
             // Note name input with autocomplete
             const nameDiv = document.createElement('div');
@@ -393,10 +423,23 @@
             });
             addDiv.appendChild(addBtn);
             
-            grid.appendChild(numberDiv);
-            grid.appendChild(nameDiv);
-            grid.appendChild(deleteDiv);
-            grid.appendChild(addDiv);
+            // Create row wrapper for styling
+            const rowWrapper = document.createElement('div');
+            rowWrapper.className = 'note-row';
+            if (isBlackKey(number)) {
+                rowWrapper.classList.add('black-key');
+            }
+            if (number === 60) {
+                rowWrapper.classList.add('middle-c');
+            }
+            
+            // Add all elements to the wrapper
+            rowWrapper.appendChild(numberDiv);
+            rowWrapper.appendChild(nameDiv);
+            rowWrapper.appendChild(deleteDiv);
+            rowWrapper.appendChild(addDiv);
+            
+            grid.appendChild(rowWrapper);
         }
 
 
@@ -524,6 +567,20 @@
                 top: document.body.scrollHeight,
                 behavior: 'smooth'
             });
+        }
+
+        // Convert MIDI note number to note name
+        function midiNoteToName(noteNumber) {
+            const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+            const octave = Math.floor(noteNumber / 12) - 1;
+            const note = noteNames[noteNumber % 12];
+            return `${note}${octave}`;
+        }
+
+        // Check if a MIDI note corresponds to a black key
+        function isBlackKey(noteNumber) {
+            const note = noteNumber % 12;
+            return [1, 3, 6, 8, 10].includes(note); // C#, D#, F#, G#, A#
         }
 
         // Update note name in drumsets data

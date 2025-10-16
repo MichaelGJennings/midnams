@@ -491,52 +491,66 @@
 				<Note Number="96" Name="HiStereo"/>
 			</NoteNameList>
 			<NoteNameList Name="Dry Acoustic Notes">
-				<Note Number="36" Name="Fusion Kick"/>
-				<Note Number="37" Name="Side Stick"/>
-				<Note Number="38" Name="Fusion Snare"/>
-				<Note Number="39" Name="Hand Clap"/>
-				<Note Number="40" Name="Snare 2"/>
-				<Note Number="41" Name="Low Tom"/>
-				<Note Number="42" Name="Closed Hi-Hat"/>
-				<Note Number="43" Name="High Tom"/>
-				<Note Number="44" Name="Pedal Hi-Hat"/>
-				<Note Number="45" Name="Mid Tom"/>
-				<Note Number="46" Name="Open Hi-Hat"/>
-				<Note Number="47" Name="Low-Mid Tom"/>
-				<Note Number="48" Name="Hi-Mid Tom"/>
-				<Note Number="49" Name="Crash Cymbal"/>
-				<Note Number="50" Name="High Tom"/>
-				<Note Number="51" Name="Ride Cymbal"/>
-				<Note Number="52" Name="Chinese Cymbal"/>
-				<Note Number="53" Name="Ride Bell"/>
-				<Note Number="54" Name="Tambourine"/>
-				<Note Number="55" Name="Splash Cymbal"/>
-				<Note Number="56" Name="Cowbell"/>
-				<Note Number="57" Name="Crash Cymbal 2"/>
-				<Note Number="58" Name="Vibraslap"/>
-				<Note Number="59" Name="Ride Cymbal 2"/>
+				<Note Number="36" Name="Pillow"/>
+				<Note Number="37" Name="Big Stik"/>
+				<Note Number="38" Name="DryCombo"/>
+				<Note Number="39" Name="HandClap"/>
+				<Note Number="40" Name="Brush"/>
+				<Note Number="41" Name="Lo Dbl"/>
+				<Note Number="42" Name="Hard Hat"/>
+				<Note Number="43" Name="Lo Dbl"/>
+				<Note Number="44" Name="HardFoot"/>
+				<Note Number="45" Name="Md Dbl"/>
+				<Note Number="46" Name="OpenItUp"/>
+				<Note Number="47" Name="Md Dbl"/>
+				<Note Number="48" Name="Hi Dbl"/>
+				<Note Number="49" Name="18&quot; Crash"/>
+				<Note Number="50" Name="Hi Dbl"/>
+				<Note Number="51" Name="DarkRide"/>
+				<Note Number="52" Name="20&quot; China"/>
+				<Note Number="53" Name="BellRide"/>
+				<Note Number="54" Name="Marabasa"/>
+				<Note Number="55" Name="10&quot; Splash"/>
+				<Note Number="56" Name="Guernsey"/>
+				<Note Number="57" Name="Lft&amp;Rght"/>
+				<Note Number="58" Name="Hi Vibra"/>
+				<Note Number="59" Name="PingRide"/>
 				<Note Number="60" Name="Hi Bongo"/>
-				<Note Number="61" Name="Low Bongo"/>
-				<Note Number="62" Name="Mute Hi Conga"/>
-				<Note Number="63" Name="Open Hi Conga"/>
-				<Note Number="64" Name="Low Conga"/>
-				<Note Number="65" Name="High Timbale"/>
-				<Note Number="66" Name="Low Timbale"/>
-				<Note Number="67" Name="High Agogo"/>
-				<Note Number="68" Name="Low Agogo"/>
-				<Note Number="69" Name="Cabasa"/>
-				<Note Number="70" Name="Maracas"/>
-				<Note Number="71" Name="Short Whistle"/>
-				<Note Number="72" Name="Long Whistle"/>
-				<Note Number="73" Name="Short Guiro"/>
-				<Note Number="74" Name="Long Guiro"/>
-				<Note Number="75" Name="Claves"/>
-				<Note Number="76" Name="Hi Wood Block"/>
-				<Note Number="77" Name="Low Wood Block"/>
-				<Note Number="78" Name="Mute Cuica"/>
-				<Note Number="79" Name="Open Cuica"/>
-				<Note Number="80" Name="Mute Triangle"/>
-				<Note Number="81" Name="Open Triangle"/>
+				<Note Number="62" Name="Dynmic A"/>
+				<Note Number="63" Name="Dynmic B"/>
+				<Note Number="64" Name="Lo Open"/>
+				<Note Number="65" Name="HiTimble"/>
+				<Note Number="66" Name="LoTimble"/>
+				<Note Number="67" Name="Hi Muted"/>
+				<Note Number="68" Name="Md Muted"/>
+				<Note Number="69" Name="LngCabsa"/>
+				<Note Number="70" Name="LoMracas"/>
+				<Note Number="71" Name="Bead Bag"/>
+				<Note Number="72" Name="OddShake"/>
+				<Note Number="73" Name="Torpedo"/>
+				<Note Number="74" Name="LoTorpdo"/>
+				<Note Number="75" Name="Hi Clave"/>
+				<Note Number="76" Name="Hi Wood"/>
+				<Note Number="77" Name="Lo Wood"/>
+				<Note Number="78" Name="Bottle"/>
+				<Note Number="79" Name="Jug"/>
+				<Note Number="80" Name="Triangle"/>
+				<Note Number="81" Name="DinrBell"/>
+				<Note Number="82" Name="Chopstix"/>
+				<Note Number="83" Name="Bamboo"/>
+				<Note Number="84" Name="BmboCombo"/>
+				<Note Number="85" Name="Squeezed"/>
+				<Note Number="86" Name="FireCrkr"/>
+				<Note Number="87" Name="Released"/>
+				<Note Number="88" Name="Hi Muted"/>
+				<Note Number="89" Name="Hi Muted"/>
+				<Note Number="90" Name="Tambrine"/>
+				<Note Number="91" Name="Md Muted"/>
+				<Note Number="92" Name="DarkTamb"/>
+				<Note Number="93" Name="Md Muted"/>
+				<Note Number="94" Name="HardTamb"/>
+				<Note Number="95" Name="Lo Agogo"/>
+				<Note Number="96" Name="Lo Agogo"/>
 			</NoteNameList>
 			<NoteNameList Name="Jingles/Pop Notes">
 				<Note Number="36" Name="Timbale Kick"/>
