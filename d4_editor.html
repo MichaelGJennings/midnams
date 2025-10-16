@@ -46,8 +46,10 @@
             background: #0056CC;
         }
         button:disabled {
-            background: #ccc;
+            background: #28a745;
+            color: white;
             cursor: not-allowed;
+            opacity: 0.8;
         }
         .notes-container {
             background: white;
@@ -126,12 +128,29 @@
             background: #f8f9fa;
             padding: 8px;
             border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .note-number:hover {
+            background: #e9ecef;
+        }
+        .note-number.playable {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+        }
+        .note-number.playable:hover {
+            background: #b8daff;
         }
         .note-row.black-key {
             background-color: #f0f0f0;
         }
         .note-row.black-key .note-number {
-            background: #e8e8e8;
+            background: #333333;
+            color: white;
+            border: 2px solid #000;
+        }
+        .note-row.black-key .note-number:hover {
+            background: #555555;
         }
         .note-row.middle-c {
             background-color: #fff3cd;
@@ -204,6 +223,59 @@
         .bottom-buttons button {
             min-width: 120px;
         }
+        .midi-controls {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #eee;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .midi-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .midi-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #dc3545;
+        }
+        .midi-indicator.connected {
+            background: #28a745;
+        }
+        .midi-device-select {
+            min-width: 200px;
+        }
+        .play-note-btn {
+            background: #17a2b8;
+            font-size: 12px;
+            padding: 4px 8px;
+            min-width: 60px;
+        }
+        .play-note-btn:hover {
+            background: #138496;
+        }
+        .keyboard-tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            z-index: 1000;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .keyboard-tooltip img {
+            filter: invert(1);
+        }
         .save-btn.saved {
             background: #28a745;
             opacity: 0.7;
@@ -230,6 +302,18 @@
 <body>
     <div class="header">
         <h1>Alesis D4 Note Editor</h1>
+        <!-- MIDI Controls -->
+        <div class="midi-controls">
+            <div class="midi-status">
+                <div class="midi-indicator" id="midi-indicator"></div>
+                <span id="midi-status-text">MIDI not connected</span>
+            </div>
+            <select id="midi-device-select" class="midi-device-select" disabled>
+                <option value="">No MIDI devices available</option>
+            </select>
+            <button id="connect-midi-btn">Enable MIDI</button>
+        </div>
+        
         <div class="controls">
             <div class="drumset-selector">
                 <label for="drumset-select">Drumset:</label>
@@ -255,6 +339,7 @@
             </div>
         </div>
 
+
         <!-- Bottom controls and white space -->
         <div class="bottom-controls">
             <div class="bottom-buttons">
@@ -267,11 +352,21 @@
 
     <div id="validation-result" class="validation-result"></div>
 
+    <!-- Hidden keyboard SVG for hover tooltip -->
+    <div id="keyboard-tooltip" class="keyboard-tooltip" style="display: none;">
+        <img src="assets/kbd.svg" alt="MIDI Keyboard" width="24" height="24">
+    </div>
+
     <script>
         let drumsets = {};
         let allNoteNames = new Set();
         let currentDrumset = '';
         let originalXml = '';
+        
+        // WebMIDI variables
+        let midiAccess = null;
+        let selectedOutput = null;
+        let patchProgramChanges = {}; // Store patch name -> program change mapping
 
         // Load the XML file
         async function loadXml() {
@@ -300,6 +395,7 @@
             patches.forEach(patch => {
                 const patchName = patch.getAttribute('Name');
                 const usesNoteNameList = patch.querySelector('UsesNoteNameList');
+                const programChange = patch.querySelector('ProgramChange');
                 
                 if (usesNoteNameList) {
                     const noteListName = usesNoteNameList.getAttribute('Name');
@@ -318,6 +414,11 @@
                         // Sort by note number
                         notes.sort((a, b) => a.number - b.number);
                         drumsets[patchName] = notes;
+                        
+                        // Store program change number for this patch
+                        if (programChange) {
+                            patchProgramChanges[patchName] = parseInt(programChange.getAttribute('Number'));
+                        }
                     }
                 }
             });
@@ -370,6 +471,16 @@
                 addNoteRow(note.number, note.name, index);
             });
             
+            // Update playability styling if MIDI device is connected
+            if (selectedOutput) {
+                updateNotePlayability(true);
+            }
+            
+            // Send MIDI program change if device is connected and patch has program change
+            if (selectedOutput && drumsetName && patchProgramChanges[drumsetName] !== undefined) {
+                sendMIDIProgramChange(patchProgramChanges[drumsetName]);
+            }
+            
             // Reset save button when switching drumsets
             resetSaveButton();
         }
@@ -378,11 +489,18 @@
         function addNoteRow(number, name, index) {
             const grid = document.getElementById('notes-grid');
             
-            // Note number display with note name
+            // Note number display with note name (clickable to play)
             const numberDiv = document.createElement('div');
             numberDiv.className = 'note-number';
             const noteName = midiNoteToName(number);
             numberDiv.textContent = `${number} (${noteName})`;
+            numberDiv.onclick = () => playMIDINote(number);
+            numberDiv.title = 'Click to play this note';
+            
+            // Add hover tooltip with keyboard icon
+            numberDiv.addEventListener('mouseenter', (e) => showKeyboardTooltip(e, number));
+            numberDiv.addEventListener('mouseleave', hideKeyboardTooltip);
+            numberDiv.addEventListener('mousemove', (e) => updateTooltipPosition(e));
             
             // Note name input with autocomplete
             const nameDiv = document.createElement('div');
@@ -581,6 +699,147 @@
         function isBlackKey(noteNumber) {
             const note = noteNumber % 12;
             return [1, 3, 6, 8, 10].includes(note); // C#, D#, F#, G#, A#
+        }
+
+        // WebMIDI functions
+        async function initializeMIDI() {
+            try {
+                if (!navigator.requestMIDIAccess) {
+                    updateMIDIStatus('WebMIDI not supported in this browser', false);
+                    return;
+                }
+
+                midiAccess = await navigator.requestMIDIAccess();
+                updateMIDIDevices();
+                updateMIDIStatus('MIDI access granted', true);
+                
+                // Listen for device changes
+                midiAccess.onstatechange = (event) => {
+                    updateMIDIDevices();
+                };
+                
+            } catch (error) {
+                console.error('MIDI initialization failed:', error);
+                updateMIDIStatus('MIDI initialization failed', false);
+            }
+        }
+
+        function updateMIDIDevices() {
+            const select = document.getElementById('midi-device-select');
+            select.innerHTML = '<option value="">Select MIDI output device...</option>';
+            
+            const outputs = Array.from(midiAccess.outputs.values());
+            outputs.forEach((output, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = output.name || `MIDI Output ${index + 1}`;
+                select.appendChild(option);
+            });
+            
+            select.disabled = outputs.length === 0;
+            if (outputs.length === 0) {
+                select.innerHTML = '<option value="">No MIDI output devices found</option>';
+            }
+        }
+
+        function updateMIDIStatus(message, connected) {
+            const indicator = document.getElementById('midi-indicator');
+            const statusText = document.getElementById('midi-status-text');
+            const connectBtn = document.getElementById('connect-midi-btn');
+            
+            indicator.className = `midi-indicator ${connected ? 'connected' : ''}`;
+            statusText.textContent = message;
+            
+            // Update button text based on state
+            if (connected) {
+                connectBtn.textContent = 'MIDI Enabled';
+                connectBtn.disabled = true;
+            } else {
+                connectBtn.textContent = 'Enable MIDI';
+                connectBtn.disabled = false;
+            }
+        }
+
+        function selectMIDIDevice() {
+            const select = document.getElementById('midi-device-select');
+            const deviceIndex = parseInt(select.value);
+            
+            if (deviceIndex >= 0) {
+                const outputs = Array.from(midiAccess.outputs.values());
+                selectedOutput = outputs[deviceIndex];
+                updateMIDIStatus(`Connected to: ${selectedOutput.name}`, true);
+                updateNotePlayability(true);
+            } else {
+                selectedOutput = null;
+                updateMIDIStatus('No device selected', false);
+                updateNotePlayability(false);
+            }
+        }
+
+        function updateNotePlayability(playable) {
+            const noteNumbers = document.querySelectorAll('.note-number');
+            noteNumbers.forEach(noteDiv => {
+                if (playable) {
+                    noteDiv.classList.add('playable');
+                } else {
+                    noteDiv.classList.remove('playable');
+                }
+            });
+        }
+
+        function playMIDINote(noteNumber, velocity = 100, duration = 200) {
+            if (!selectedOutput) {
+                alert('Please select a MIDI output device first');
+                return;
+            }
+
+            try {
+                // Note On
+                selectedOutput.send([0x90, noteNumber, velocity]);
+                
+                // Note Off after duration
+                setTimeout(() => {
+                    selectedOutput.send([0x80, noteNumber, 0]);
+                }, duration);
+                
+            } catch (error) {
+                console.error('Failed to send MIDI note:', error);
+                alert('Failed to send MIDI note. Check device connection.');
+            }
+        }
+
+        function sendMIDIProgramChange(programNumber) {
+            if (!selectedOutput) {
+                return; // Silently fail if no MIDI device selected
+            }
+
+            try {
+                // Send Program Change message (0xC0 = Program Change, programNumber)
+                selectedOutput.send([0xC0, programNumber]);
+                console.log(`Sent Program Change: ${programNumber}`);
+            } catch (error) {
+                console.error('Failed to send MIDI program change:', error);
+            }
+        }
+
+        // Keyboard tooltip functions
+        function showKeyboardTooltip(event, noteNumber) {
+            const tooltip = document.getElementById('keyboard-tooltip');
+            const noteName = midiNoteToName(noteNumber);
+            tooltip.innerHTML = `<img src="assets/kbd.svg" alt="MIDI Keyboard" width="24" height="24"> Play ${noteName}`;
+            tooltip.style.display = 'flex';
+            updateTooltipPosition(event);
+        }
+
+        function hideKeyboardTooltip() {
+            const tooltip = document.getElementById('keyboard-tooltip');
+            tooltip.style.display = 'none';
+        }
+
+        function updateTooltipPosition(event) {
+            const tooltip = document.getElementById('keyboard-tooltip');
+            tooltip.style.left = (event.pageX + 10) + 'px';
+            tooltip.style.top = (event.pageY - 40) + 'px';
         }
 
         // Update note name in drumsets data
@@ -835,9 +1094,14 @@
         document.getElementById('save-btn').addEventListener('click', saveChanges);
         document.getElementById('validate-btn').addEventListener('click', validateXml);
         document.getElementById('reload-btn').addEventListener('click', loadXml);
+        
+        // MIDI event listeners
+        document.getElementById('connect-midi-btn').addEventListener('click', initializeMIDI);
+        document.getElementById('midi-device-select').addEventListener('change', selectMIDIDevice);
 
         // Initialize
         loadXml();
+        initializeMIDI();
     </script>
 </body>
 </html>
