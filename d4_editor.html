@@ -513,6 +513,7 @@
             nameInput.addEventListener('focus', showDropdown);
             nameInput.addEventListener('blur', () => setTimeout(hideDropdown, 200));
             nameInput.addEventListener('keydown', handleKeyDown);
+            nameInput.addEventListener('keydown', handleEnterKey);
             
             const dropdown = document.createElement('div');
             dropdown.className = 'dropdown';
@@ -646,7 +647,7 @@
                         hideDropdown();
                         updateNoteName(input.dataset.index, selectedItem.textContent);
                     } else {
-                        // Commit current text and move to + button
+                        // Commit current text (including pasted text)
                         hideDropdown();
                         updateNoteName(input.dataset.index, input.value);
                     }
@@ -842,6 +843,27 @@
             tooltip.style.top = (event.pageY - 40) + 'px';
         }
 
+        // Handle Enter key for all input scenarios
+        function handleEnterKey(event) {
+            if (event.key === 'Enter' || event.key === 'Return') {
+                event.preventDefault();
+                const input = event.target;
+                
+                // Always commit the current text and move to + button
+                hideDropdown();
+                updateNoteName(input.dataset.index, input.value);
+                
+                // Move focus to the + button for this row
+                setTimeout(() => {
+                    const rowIndex = parseInt(input.dataset.index);
+                    const addButtons = document.querySelectorAll('.add-btn');
+                    if (addButtons[rowIndex]) {
+                        addButtons[rowIndex].focus();
+                    }
+                }, 50);
+            }
+        }
+
         // Update note name in drumsets data
         function updateNoteName(index, name) {
             if (currentDrumset && drumsets[currentDrumset]) {
@@ -871,6 +893,8 @@
                     allNoteNames.delete(deletedNote.name);
                 }
                 
+                // Renumber all notes to be consecutive
+                renumberNotes();
                 loadDrumset(currentDrumset);
                 resetSaveButton();
             }
