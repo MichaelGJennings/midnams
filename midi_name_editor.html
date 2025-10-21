@@ -696,6 +696,86 @@
             background: #138496;
         }
 
+        /* Note actions styling */
+        .note-actions {
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .note-actions .btn {
+            margin: 0 2px;
+            min-width: 32px;
+            height: 32px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .add-note-btn {
+            background: #28a745;
+            border-color: #28a745;
+            color: white;
+        }
+
+        .add-note-btn:hover {
+            background: #218838;
+            border-color: #1e7e34;
+        }
+
+        .remove-note-btn {
+            background: #dc3545;
+            border-color: #dc3545;
+            color: white;
+        }
+
+        .remove-note-btn:hover {
+            background: #c82333;
+            border-color: #bd2130;
+        }
+
+        /* Note name dropdown styling */
+        .note-name-cell {
+            position: relative;
+        }
+
+        .note-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .note-dropdown-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        .note-dropdown-item:hover {
+            background: #f0f0f0;
+        }
+
+        .note-dropdown-item.selected {
+            background: #007AFF;
+            color: white;
+        }
+
+        .note-dropdown-item:last-child {
+            border-bottom: none;
+        }
+
 
         .keyboard-tooltip {
             position: absolute;
@@ -1896,6 +1976,9 @@
                 }
                 if (midiDeviceSelect) midiDeviceSelect.disabled = true;
             }
+            
+            // Initialize note names for autocomplete
+            initializeNoteNames();
         });
 
         // MIDI State Management Functions
@@ -3054,6 +3137,10 @@ ${analysis.bank_details.map(bank => `  ${bank.name}: ${bank.patch_count} patches
         function selectDevice(device) {
             selectedDevice = device;
             
+            // Debug: Log the device structure
+            console.log('Device selected:', device);
+            console.log('Device files:', device.files);
+            
             // Update UI - remove previous selections
             document.querySelectorAll('.device-table tr').forEach(row => {
                 row.classList.remove('selected');
@@ -3295,6 +3382,14 @@ ${analysis.bank_details.map(bank => `  ${bank.name}: ${bank.patch_count} patches
                 
                 // Parse the MIDI Name Document
                 parseMidnamDocument(xmlDoc);
+                
+                // Store the file path in selectedDevice for saving
+                if (selectedDevice) {
+                    selectedDevice.files = deviceInfo.files;
+                    selectedDevice.currentFile = fileToLoad;
+                    console.log('Updated selectedDevice with file info:', selectedDevice);
+                }
+                
                 console.log(`Loaded .midnam file: ${fileToLoad.path}`);
                 
             } catch (error) {
@@ -3611,7 +3706,7 @@ ${analysis.bank_details.map(bank => `  ${bank.name}: ${bank.patch_count} patches
                             <div class="patch-actions">
                                 <button class="btn btn-small btn-primary" onclick="selectPatch('${bankName}', '${patch.name}', '${patch.number}', '${patch.programChange || patch.number}')">Edit Patch</button>
                                 <button class="btn btn-small btn-secondary" onclick="editPatch('${bankName}', '${patch.name}', '${patch.number}', '${patch.programChange || patch.number}')">Settings</button>
-                                <button class="btn btn-small btn-secondary" onclick="${patch.usesNoteList ? `editNoteNameList('${patch.usesNoteList}')` : `addNoteListToPatch('${bankName}', '${patch.name}')`}">${patch.usesNoteList ? 'Edit Note Names' : 'Add Note Names'}</button>
+                                <button class="btn btn-small btn-secondary" onclick="${patch.usesNoteList ? `editNoteNameList('${patch.usesNoteList}', '${bankName}', '${patch.name}', '${patch.number}', '${patch.programChange || patch.number}')` : `addNoteListToPatch('${bankName}', '${patch.name}')`}">${patch.usesNoteList ? 'Edit Note Names' : 'Add Note Names'}</button>
                                 <button class="btn btn-small btn-danger" onclick="removePatch(this)">Remove</button>
                             </div>
                         </div>
@@ -3839,7 +3934,7 @@ ${analysis.bank_details.map(bank => `  ${bank.name}: ${bank.patch_count} patches
                                 <div class="patch-actions">
                                     <button class="btn btn-small btn-primary" onclick="selectPatch('${bankName}', '${patchName}', '${patchNumber}', '${programChange || patchNumber}')">Edit Patch</button>
                                     <button class="btn btn-small btn-secondary" onclick="editPatch('${bankName}', '${patchName}', '${patchNumber}', '${programChange || patchNumber}')">Settings</button>
-                                    <button class="btn btn-small btn-secondary" onclick="${noteListName ? `editNoteNameList('${noteListName}')` : `addNoteListToPatch('${bankName}', '${patchName}')`}">${noteListName ? 'Edit Note Names' : 'Add Note Names'}</button>
+                                    <button class="btn btn-small btn-secondary" onclick="${noteListName ? `editNoteNameList('${noteListName}', '${bankName}', '${patchName}', '${patchNumber}', '${programChange || patchNumber}')` : `addNoteListToPatch('${bankName}', '${patchName}')`}">${noteListName ? 'Edit Note Names' : 'Add Note Names'}</button>
                                     <button class="btn btn-small btn-danger" onclick="removePatch(this)">Remove</button>
                                 </div>
                             </div>
@@ -3859,7 +3954,18 @@ ${analysis.bank_details.map(bank => `  ${bank.name}: ${bank.patch_count} patches
             }
         }
 
-        function editNoteNameList(name) {
+        function editNoteNameList(name, bankName, patchName, patchNumber, programChange) {
+            // Set the selected patch context
+            selectedPatch = {
+                bankName: bankName,
+                name: patchName,
+                number: patchNumber,
+                programChange: programChange
+            };
+            
+            // Update patch tab info
+            document.getElementById('selected-patch').textContent = `${patchName} (#${patchNumber})`;
+            
             // Switch to Patch tab for editing
             document.querySelector('[data-tab="patch"]').click();
             
@@ -3868,6 +3974,12 @@ ${analysis.bank_details.map(bank => `  ${bank.name}: ${bank.patch_count} patches
             
             // Populate patch dropdown with available kits
             populatePatchDropdown();
+            
+            // Set the correct patch in the dropdown
+            const patchSelect = document.getElementById('patch-select');
+            if (patchSelect) {
+                patchSelect.value = `${bankName}|${patchName}`;
+            }
         }
 
         function loadNoteListDataFromCurrentDevice(listName) {
@@ -4086,12 +4198,12 @@ ${analysis.bank_details.map(bank => `  ${bank.name}: ${bank.patch_count} patches
         function sendBankSelectCommands(commands) {
             const output = getMIDIOutput();
             if (!output || !midiEnabled) {
-                alert('MIDI not enabled or no output device selected');
+                console.log('MIDI not enabled or no output device selected - skipping bank select commands');
                 return;
             }
             
             if (commands.length === 0) {
-                alert('No bank select commands to send');
+                console.log('No bank select commands to send');
                 return;
             }
             
@@ -4407,28 +4519,63 @@ ${analysis.bank_details.map(bank => `  ${bank.name}: ${bank.patch_count} patches
             
             noteNumberCell.appendChild(noteNumberDiv);
             
-            // Create note name input cell
+            // Create note name input cell with dropdown
             const noteNameCell = document.createElement('td');
+            noteNameCell.className = 'note-name-cell';
+            
             const noteNameInput = document.createElement('input');
             noteNameInput.type = 'text';
             noteNameInput.value = name;
             noteNameInput.className = 'note-name-input';
             noteNameInput.placeholder = 'Note name';
             noteNameInput.setAttribute('data-note-number', number);
-            noteNameCell.appendChild(noteNameInput);
             
-            // Create remove button cell
-            const removeCell = document.createElement('td');
+            // Add event listeners for dropdown functionality
+            noteNameInput.addEventListener('input', handleNoteNameInput);
+            noteNameInput.addEventListener('focus', showNoteDropdown);
+            noteNameInput.addEventListener('blur', () => setTimeout(hideNoteDropdown, 200));
+            noteNameInput.addEventListener('keydown', handleNoteKeyDown);
+            
+            // Create dropdown
+            const dropdown = document.createElement('div');
+            dropdown.className = 'note-dropdown';
+            
+            noteNameCell.appendChild(noteNameInput);
+            noteNameCell.appendChild(dropdown);
+            
+            // Create actions cell with both add and remove buttons
+            const actionsCell = document.createElement('td');
+            actionsCell.className = 'note-actions';
+            
+            // Add/Insert button
+            const addBtn = document.createElement('button');
+            addBtn.className = 'btn btn-small btn-success add-note-btn';
+            addBtn.textContent = '+';
+            addBtn.title = 'Add note after this one';
+            addBtn.onclick = () => addNoteAfter(number);
+            addBtn.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    addNoteAfter(number);
+                }
+            });
+            
+            // Remove button
             const removeBtn = document.createElement('button');
-            removeBtn.className = 'btn btn-small btn-danger';
-            removeBtn.textContent = 'Remove';
+            removeBtn.className = 'btn btn-small btn-danger remove-note-btn';
+            removeBtn.textContent = '×';
+            removeBtn.title = 'Remove this note';
+            removeBtn.tabIndex = -1; // Exclude from tab focus for safety
             removeBtn.onclick = () => removeNote(removeBtn);
-            removeCell.appendChild(removeBtn);
+            
+            // Add both buttons to actions cell
+            actionsCell.appendChild(addBtn);
+            actionsCell.appendChild(removeBtn);
             
             // Append all cells to row
             row.appendChild(noteNumberCell);
             row.appendChild(noteNameCell);
-            row.appendChild(removeCell);
+            row.appendChild(actionsCell);
             
             tableBody.appendChild(row);
         }
@@ -4444,9 +4591,602 @@ ${analysis.bank_details.map(bank => `  ${bank.name}: ${bank.patch_count} patches
             addNoteRow(nextNumber, midiNoteToName(nextNumber));
         }
 
+        function addNoteAfter(afterNumber) {
+            const tableBody = document.getElementById('note-table-body');
+            const rows = Array.from(tableBody.querySelectorAll('tr'));
+            
+            // Find the row with the specified note number
+            let insertIndex = -1;
+            for (let i = 0; i < rows.length; i++) {
+                const noteNumberInput = rows[i].querySelector('input[data-note-number]');
+                if (noteNumberInput && parseInt(noteNumberInput.getAttribute('data-note-number')) === afterNumber) {
+                    insertIndex = i;
+                    break;
+                }
+            }
+            
+            if (insertIndex === -1) {
+                // If note not found, just add at the end
+                addNote();
+                return;
+            }
+            
+            // Get all existing note numbers to find the next available number
+            const existingNumbers = Array.from(tableBody.querySelectorAll('input[data-note-number]'))
+                .map(input => parseInt(input.getAttribute('data-note-number')))
+                .filter(num => !isNaN(num))
+                .sort((a, b) => a - b);
+            
+            // Find the next available number after the specified number
+            let nextNumber = afterNumber + 1;
+            while (existingNumbers.includes(nextNumber)) {
+                nextNumber++;
+            }
+            
+            // Create the new row
+            const newRow = document.createElement('tr');
+            
+            // Add piano key styling classes
+            if (isBlackKey(nextNumber)) {
+                newRow.classList.add('black-key');
+            }
+            if (nextNumber === 60) {
+                newRow.classList.add('middle-c');
+            }
+            
+            // Get chromatic note name
+            const chromaticName = midiNoteToName(nextNumber);
+            
+            // Create note number cell with tooltip functionality
+            const noteNumberCell = document.createElement('td');
+            const noteNumberDiv = document.createElement('div');
+            noteNumberDiv.className = 'note-number-cell';
+            noteNumberDiv.textContent = `${nextNumber} (${chromaticName})`;
+            noteNumberDiv.title = 'Click to play this note';
+            noteNumberDiv.onclick = () => playMIDINote(nextNumber);
+            
+            // Add tooltip event listeners
+            noteNumberDiv.addEventListener('mouseenter', (e) => showKeyboardTooltip(e, nextNumber));
+            noteNumberDiv.addEventListener('mouseleave', hideKeyboardTooltip);
+            noteNumberDiv.addEventListener('mousemove', (e) => updateTooltipPosition(e));
+            
+            noteNumberCell.appendChild(noteNumberDiv);
+            
+            // Create note name input cell with dropdown
+            const noteNameCell = document.createElement('td');
+            noteNameCell.className = 'note-name-cell';
+            
+            const noteNameInput = document.createElement('input');
+            noteNameInput.type = 'text';
+            noteNameInput.value = midiNoteToName(nextNumber);
+            noteNameInput.className = 'note-name-input';
+            noteNameInput.placeholder = 'Note name';
+            noteNameInput.setAttribute('data-note-number', nextNumber);
+            
+            // Add event listeners for dropdown functionality
+            noteNameInput.addEventListener('input', handleNoteNameInput);
+            noteNameInput.addEventListener('focus', showNoteDropdown);
+            noteNameInput.addEventListener('blur', () => setTimeout(hideNoteDropdown, 200));
+            noteNameInput.addEventListener('keydown', handleNoteKeyDown);
+            
+            // Create dropdown
+            const dropdown = document.createElement('div');
+            dropdown.className = 'note-dropdown';
+            
+            noteNameCell.appendChild(noteNameInput);
+            noteNameCell.appendChild(dropdown);
+            
+            // Create actions cell with both add and remove buttons
+            const actionsCell = document.createElement('td');
+            actionsCell.className = 'note-actions';
+            
+            // Add/Insert button
+            const addBtn = document.createElement('button');
+            addBtn.className = 'btn btn-small btn-success add-note-btn';
+            addBtn.textContent = '+';
+            addBtn.title = 'Add note after this one';
+            addBtn.onclick = () => addNoteAfter(nextNumber);
+            addBtn.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    addNoteAfter(nextNumber);
+                }
+            });
+            
+            // Remove button
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'btn btn-small btn-danger remove-note-btn';
+            removeBtn.textContent = '×';
+            removeBtn.title = 'Remove this note';
+            removeBtn.tabIndex = -1; // Exclude from tab focus for safety
+            removeBtn.onclick = () => removeNote(removeBtn);
+            
+            // Add both buttons to actions cell
+            actionsCell.appendChild(addBtn);
+            actionsCell.appendChild(removeBtn);
+            
+            // Append all cells to row
+            newRow.appendChild(noteNumberCell);
+            newRow.appendChild(noteNameCell);
+            newRow.appendChild(actionsCell);
+            
+            // Insert the new row after the specified note
+            if (insertIndex + 1 < rows.length) {
+                tableBody.insertBefore(newRow, rows[insertIndex + 1]);
+            } else {
+                tableBody.appendChild(newRow);
+            }
+            
+            // Focus on the new note name input for immediate editing
+            setTimeout(() => {
+                noteNameInput.focus();
+                noteNameInput.select();
+            }, 100);
+        }
+
         function removeNote(button) {
             if (confirm('Remove this note?')) {
                 button.closest('tr').remove();
+            }
+        }
+
+        // Global set to store all note names for autocomplete
+        let allNoteNames = new Set();
+
+        // Initialize note names from common drum sounds and current device
+        function initializeNoteNames() {
+            // Start with common drum sound names
+            const commonNoteNames = [
+                'Kick', 'Snare', 'Hi-Hat Closed', 'Hi-Hat Open', 'Crash', 'Ride',
+                'Tom 1', 'Tom 2', 'Tom 3', 'Tom 4', 'Tom 5', 'Tom 6',
+                'Rim Shot', 'Clap', 'Cowbell', 'Tambourine', 'Shaker',
+                'Open Hi-Hat', 'Closed Hi-Hat', 'Pedal Hi-Hat',
+                'Crash 1', 'Crash 2', 'Ride 1', 'Ride 2',
+                'Splash', 'China', 'Bell', 'Wood Block',
+                'Hand Clap', 'Finger Snap', 'Stick Click',
+                'Brush Tap', 'Brush Swirl', 'Brush Slap',
+                'Side Stick', 'Rim Click', 'Cross Stick',
+                'Low Tom', 'Mid Tom', 'High Tom',
+                'Floor Tom 1', 'Floor Tom 2',
+                'Bass Drum', 'Kick Drum', 'Sub Kick',
+                'Snare Roll', 'Snare Ghost', 'Snare Rim',
+                'Hi-Hat Foot', 'Hi-Hat Splash', 'Hi-Hat Chick'
+            ];
+            
+            commonNoteNames.forEach(name => allNoteNames.add(name));
+            
+            // Add note names from current device if available
+            if (currentMidnam) {
+                const deviceNoteNames = extractAllNoteNamesFromDevice();
+                deviceNoteNames.forEach(name => allNoteNames.add(name));
+                console.log(`Added ${deviceNoteNames.length} note names from current device`);
+            }
+        }
+
+        // Extract all note names from the current device
+        function extractAllNoteNamesFromDevice() {
+            const noteNames = new Set();
+            
+            if (!currentMidnam) return Array.from(noteNames);
+            
+            const midnamDoc = currentMidnam.querySelector('MIDINameDocument');
+            if (!midnamDoc) return Array.from(noteNames);
+            
+            // Get all NoteNameList elements
+            const noteNameLists = midnamDoc.querySelectorAll('NoteNameList');
+            noteNameLists.forEach(noteList => {
+                const notes = noteList.querySelectorAll('Note');
+                notes.forEach(note => {
+                    const name = note.getAttribute('Name');
+                    if (name && name.trim()) {
+                        noteNames.add(name.trim());
+                    }
+                });
+            });
+            
+            return Array.from(noteNames);
+        }
+
+        // Update note names when device changes
+        function updateNoteNamesForDevice() {
+            // Clear existing device-specific names (keep common ones)
+            const commonNoteNames = [
+                'Kick', 'Snare', 'Hi-Hat Closed', 'Hi-Hat Open', 'Crash', 'Ride',
+                'Tom 1', 'Tom 2', 'Tom 3', 'Tom 4', 'Tom 5', 'Tom 6',
+                'Rim Shot', 'Clap', 'Cowbell', 'Tambourine', 'Shaker',
+                'Open Hi-Hat', 'Closed Hi-Hat', 'Pedal Hi-Hat',
+                'Crash 1', 'Crash 2', 'Ride 1', 'Ride 2',
+                'Splash', 'China', 'Bell', 'Wood Block',
+                'Hand Clap', 'Finger Snap', 'Stick Click',
+                'Brush Tap', 'Brush Swirl', 'Brush Slap',
+                'Side Stick', 'Rim Click', 'Cross Stick',
+                'Low Tom', 'Mid Tom', 'High Tom',
+                'Floor Tom 1', 'Floor Tom 2',
+                'Bass Drum', 'Kick Drum', 'Sub Kick',
+                'Snare Roll', 'Snare Ghost', 'Snare Rim',
+                'Hi-Hat Foot', 'Hi-Hat Splash', 'Hi-Hat Chick'
+            ];
+            
+            // Rebuild the set with common names
+            allNoteNames.clear();
+            commonNoteNames.forEach(name => allNoteNames.add(name));
+            
+            // Add device-specific names
+            if (currentMidnam) {
+                const deviceNoteNames = extractAllNoteNamesFromDevice();
+                deviceNoteNames.forEach(name => allNoteNames.add(name));
+                console.log(`Updated note names: ${allNoteNames.size} total (${deviceNoteNames.length} from device)`);
+            }
+        }
+
+        // Handle note name input with autocomplete
+        function handleNoteNameInput(event) {
+            const input = event.target;
+            const value = input.value.toLowerCase();
+            const dropdown = input.parentNode.querySelector('.note-dropdown');
+            
+            // Filter note names
+            const matches = Array.from(allNoteNames).filter(name => 
+                name.toLowerCase().includes(value) && name !== input.value
+            ).slice(0, 10);
+            
+            if (matches.length > 0 && value.length > 0) {
+                dropdown.innerHTML = '';
+                matches.forEach((match, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'note-dropdown-item';
+                    item.textContent = match;
+                    item.dataset.index = index;
+                    item.onclick = () => {
+                        input.value = match;
+                        hideNoteDropdown();
+                        // Add to autocomplete index if it's a new name
+                        if (!allNoteNames.has(match)) {
+                            allNoteNames.add(match);
+                        }
+                    };
+                    dropdown.appendChild(item);
+                });
+                dropdown.style.display = 'block';
+                
+                // Reset selection
+                input.dataset.selectedIndex = -1;
+            } else {
+                hideNoteDropdown();
+            }
+        }
+
+        function showNoteDropdown(event) {
+            const dropdown = event.target.parentNode.querySelector('.note-dropdown');
+            if (dropdown.children.length > 0) {
+                dropdown.style.display = 'block';
+            }
+        }
+
+        function hideNoteDropdown() {
+            document.querySelectorAll('.note-dropdown').forEach(dropdown => {
+                dropdown.style.display = 'none';
+            });
+        }
+
+        // Handle keyboard navigation in dropdown
+        function handleNoteKeyDown(event) {
+            const input = event.target;
+            const dropdown = input.parentNode.querySelector('.note-dropdown');
+            const items = dropdown.querySelectorAll('.note-dropdown-item');
+            
+            switch (event.key) {
+                case 'ArrowDown':
+                    if (items.length > 0) {
+                        event.preventDefault();
+                        let selectedIndex = parseInt(input.dataset.selectedIndex || -1);
+                        selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+                        updateNoteSelection(items, selectedIndex);
+                        input.dataset.selectedIndex = selectedIndex;
+                    }
+                    break;
+                    
+                case 'ArrowUp':
+                    if (items.length > 0) {
+                        event.preventDefault();
+                        let selectedIndex = parseInt(input.dataset.selectedIndex || -1);
+                        selectedIndex = Math.max(selectedIndex - 1, -1);
+                        updateNoteSelection(items, selectedIndex);
+                        input.dataset.selectedIndex = selectedIndex;
+                    }
+                    break;
+                    
+                case 'Enter':
+                case 'Return':
+                    event.preventDefault();
+                    // Check if dropdown is visible by checking its display style
+                    const isDropdownVisible = dropdown.style.display === 'block' && items.length > 0;
+                    
+                    if (isDropdownVisible) {
+                        // Dropdown is visible - select from dropdown
+                        let selectedIndex = parseInt(input.dataset.selectedIndex || -1);
+                        if (selectedIndex >= 0 && items[selectedIndex]) {
+                            input.value = items[selectedIndex].textContent;
+                            hideNoteDropdown();
+                            // Add to autocomplete index if it's a new name
+                            if (!allNoteNames.has(input.value)) {
+                                allNoteNames.add(input.value);
+                            }
+                        }
+                    } else {
+                        // No dropdown visible - commit changes and move to Add button
+                        hideNoteDropdown();
+                        const addButton = input.closest('tr').querySelector('.add-note-btn');
+                        if (addButton) {
+                            addButton.focus();
+                        }
+                    }
+                    break;
+                    
+                case 'Escape':
+                    event.preventDefault();
+                    hideNoteDropdown();
+                    input.dataset.selectedIndex = -1;
+                    break;
+                    
+                case 'Tab':
+                    // Allow normal tab behavior
+                    hideNoteDropdown();
+                    break;
+            }
+        }
+
+        // Update visual selection in dropdown
+        function updateNoteSelection(items, selectedIndex) {
+            items.forEach((item, index) => {
+                if (index === selectedIndex) {
+                    item.classList.add('selected');
+                } else {
+                    item.classList.remove('selected');
+                }
+            });
+        }
+
+        // Collect note data from the editor
+        function collectNoteDataFromEditor() {
+            const noteData = [];
+            const tableBody = document.getElementById('note-table-body');
+            
+            if (!tableBody) {
+                console.log('No note table body found');
+                return noteData;
+            }
+            
+            const rows = tableBody.querySelectorAll('tr');
+            rows.forEach(row => {
+                const noteNumberInput = row.querySelector('input[data-note-number]');
+                const noteNameInput = row.querySelector('.note-name-input');
+                
+                if (noteNumberInput && noteNameInput) {
+                    const number = parseInt(noteNumberInput.getAttribute('data-note-number'));
+                    const name = noteNameInput.value.trim();
+                    
+                    if (!isNaN(number)) {
+                        noteData.push({ number, name: name || '' });
+                    }
+                }
+            });
+            
+            // Sort by note number
+            noteData.sort((a, b) => a.number - b.number);
+            
+            console.log('Collected note data:', noteData);
+            return noteData;
+        }
+
+        // Save note data to patch
+        async function saveNoteDataToPatch(patchContext, noteData) {
+            try {
+                if (!currentMidnam) {
+                    alert('No device XML loaded. Please select a device first.');
+                    return;
+                }
+                
+                const midnamDoc = currentMidnam.querySelector('MIDINameDocument');
+                if (!midnamDoc) {
+                    alert('Invalid MIDI name document');
+                    return;
+                }
+                
+                // Find the patch bank
+                const patchBank = midnamDoc.querySelector(`PatchBank[Name="${patchContext.bankName}"]`);
+                if (!patchBank) {
+                    alert(`Patch bank "${patchContext.bankName}" not found`);
+                    return;
+                }
+                
+                // Find the specific patch
+                const patchElement = patchBank.querySelector(`Patch[Name="${patchContext.name}"]`);
+                if (!patchElement) {
+                    alert(`Patch "${patchContext.name}" not found`);
+                    return;
+                }
+                
+                // Find or create the note list reference
+                let usesNoteNameList = patchElement.querySelector('UsesNoteNameList');
+                let noteListName = null;
+                
+                if (usesNoteNameList) {
+                    noteListName = usesNoteNameList.getAttribute('Name');
+                } else {
+                    // Create a new note list reference
+                    noteListName = `${patchContext.name} Notes`;
+                    usesNoteNameList = document.createElement('UsesNoteNameList');
+                    usesNoteNameList.setAttribute('Name', noteListName);
+                    patchElement.appendChild(usesNoteNameList);
+                }
+                
+                // Find or create the note list
+                let noteList = midnamDoc.querySelector(`NoteNameList[Name="${noteListName}"]`);
+                if (!noteList) {
+                    // Create a new note list
+                    noteList = document.createElement('NoteNameList');
+                    noteList.setAttribute('Name', noteListName);
+                    midnamDoc.appendChild(noteList);
+                }
+                
+                // Update existing notes and add new ones (don't clear all)
+                const existingNotes = noteList.querySelectorAll('Note');
+                const existingNoteMap = new Map();
+                
+                // Create a map of existing notes by number
+                existingNotes.forEach(note => {
+                    const number = parseInt(note.getAttribute('Number'));
+                    if (!isNaN(number)) {
+                        existingNoteMap.set(number, note);
+                    }
+                });
+                
+                // Update or add notes from the editor
+                noteData.forEach(note => {
+                    if (existingNoteMap.has(note.number)) {
+                        // Update existing note
+                        const existingNote = existingNoteMap.get(note.number);
+                        existingNote.setAttribute('Name', note.name);
+                    } else {
+                        // Add new note with proper formatting
+                        const noteElement = document.createElement('Note');
+                        noteElement.setAttribute('Number', note.number);
+                        noteElement.setAttribute('Name', note.name);
+                        
+                        // Add proper indentation and newline before the note
+                        const indentBefore = document.createTextNode('\n\t\t\t\t');
+                        noteList.appendChild(indentBefore);
+                        noteList.appendChild(noteElement);
+                    }
+                });
+                
+                // SAFETY: We do NOT remove notes that aren't in the editor
+                // This prevents accidentally deleting notes that weren't loaded into the editor
+                // Only update existing notes and add new ones - preserve everything else
+                
+                // Ensure proper formatting at the end of the note list
+                const lastChild = noteList.lastChild;
+                if (lastChild && lastChild.nodeType === Node.ELEMENT_NODE) {
+                    // Add final newline and indentation after the last note
+                    const finalIndent = document.createTextNode('\n\t\t\t');
+                    noteList.appendChild(finalIndent);
+                }
+                
+                // Update the current XML
+                currentMidnam = midnamDoc.ownerDocument;
+                
+                // Save the file to disk
+                await saveFileToDisk(midnamDoc.ownerDocument);
+                
+                alert(`Successfully saved ${noteData.length} notes for patch "${patchContext.name}"`);
+                console.log('Saved note data:', noteData);
+                
+            } catch (error) {
+                console.error('Error saving note data:', error);
+                alert(`Error saving note data: ${error.message}`);
+            }
+        }
+
+        // Format XML string with proper indentation and line breaks
+        function formatXMLString(xmlString) {
+            // Simple XML formatting - add line breaks after closing tags
+            let formatted = xmlString
+                .replace(/></g, '>\n<')  // Add line breaks between tags
+                .replace(/^\s*\n/gm, '')  // Remove empty lines
+                .replace(/\n\s*\n/g, '\n'); // Remove multiple consecutive empty lines
+            
+            // Add proper indentation
+            const lines = formatted.split('\n');
+            let indentLevel = 0;
+            const indentedLines = lines.map(line => {
+                const trimmed = line.trim();
+                if (!trimmed) return '';
+                
+                // Decrease indent for closing tags
+                if (trimmed.startsWith('</')) {
+                    indentLevel = Math.max(0, indentLevel - 1);
+                }
+                
+                const indent = '\t'.repeat(indentLevel);
+                const result = indent + trimmed;
+                
+                // Increase indent for opening tags (but not self-closing)
+                if (trimmed.startsWith('<') && !trimmed.startsWith('</') && !trimmed.endsWith('/>')) {
+                    indentLevel++;
+                }
+                
+                return result;
+            });
+            
+            return indentedLines.join('\n');
+        }
+
+        // Save the XML document to disk
+        async function saveFileToDisk(xmlDoc) {
+            try {
+                // Convert XML document to string with proper formatting
+                const xmlString = formatXMLString(new XMLSerializer().serializeToString(xmlDoc));
+                
+                // Debug: Log the selectedDevice structure
+                console.log('selectedDevice:', selectedDevice);
+                console.log('selectedDevice.files:', selectedDevice?.files);
+                
+                // Get the file path from the current device
+                let filePath = null;
+                
+                if (selectedDevice && selectedDevice.currentFile) {
+                    // Use the currently loaded file
+                    filePath = selectedDevice.currentFile.path;
+                } else if (selectedDevice && selectedDevice.files && selectedDevice.files.length > 0) {
+                    // Use the first file's path
+                    filePath = selectedDevice.files[0].path;
+                } else if (selectedDevice && selectedDevice.filePath) {
+                    // Fallback to direct filePath property
+                    filePath = selectedDevice.filePath;
+                } else {
+                    // Try to get file path from the current XML document
+                    // This happens when we're editing a loaded device
+                    const midnamDoc = xmlDoc.querySelector('MIDINameDocument');
+                    if (midnamDoc) {
+                        // For now, use a default path based on the device name
+                        const manufacturer = midnamDoc.querySelector('MasterDeviceNames Manufacturer')?.textContent || 'Unknown';
+                        const model = midnamDoc.querySelector('MasterDeviceNames Model')?.textContent || 'Unknown';
+                        filePath = `patchfiles/${manufacturer}/${model}.midnam`;
+                    }
+                }
+                
+                if (!filePath) {
+                    throw new Error('No device file path available for saving');
+                }
+                
+                // Send to server
+                const response = await fetch('/save_file', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        file_path: filePath,
+                        xml_content: xmlString
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status} ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                if (!result.success) {
+                    throw new Error('Server returned error');
+                }
+                
+                console.log('File saved successfully:', result);
+                return result;
+                
+            } catch (error) {
+                console.error('Error saving file to disk:', error);
+                throw error;
             }
         }
 
@@ -4540,7 +5280,7 @@ ${analysis.bank_details.map(bank => `  ${bank.name}: ${bank.patch_count} patches
             noteListDiv.innerHTML = `
                 <span class="note-list-name">${noteListName}</span>
                 <div class="note-list-actions">
-                    <button class="btn btn-small btn-primary" onclick="editNoteNameList('${noteListName}')">Edit Note Names</button>
+                    <button class="btn btn-small btn-primary" onclick="editNoteNameList('${noteListName}', '${selectedPatch.bankName}', '${selectedPatch.name}', '${selectedPatch.number}', '${selectedPatch.programChange}')">Edit Note Names</button>
                     <button class="btn btn-small btn-danger" onclick="removeNoteListFromCurrentPatch(this)">Remove</button>
                 </div>
             `;
@@ -4689,6 +5429,9 @@ ${analysis.bank_details.map(bank => `  ${bank.name}: ${bank.patch_count} patches
         function parseMidnamDocument(xmlDoc) {
             // Store the XML document globally for patch loading
             currentMidnam = xmlDoc;
+            
+            // Update note names for autocomplete with device-specific names
+            updateNoteNamesForDevice();
             
             // Find the root MIDINameDocument
             const midnamDoc = xmlDoc.querySelector('MIDINameDocument');
@@ -4870,8 +5613,17 @@ ${analysis.bank_details.map(bank => `  ${bank.name}: ${bank.patch_count} patches
                 alert('Please select a patch first');
                 return;
             }
-            // TODO: Implement patch saving
-            alert(`Save patch "${selectedPatch.name}" - Not yet implemented`);
+            
+            // Collect note data from the editor
+            const noteData = collectNoteDataFromEditor();
+            
+            if (noteData.length === 0) {
+                alert('No notes to save');
+                return;
+            }
+            
+            // Save the note data
+            saveNoteDataToPatch(selectedPatch, noteData);
         });
 
         document.getElementById('validate-patch').addEventListener('click', () => {

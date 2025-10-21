@@ -42,6 +42,8 @@ class MIDINameHandler(http.server.SimpleHTTPRequestHandler):
     def do_POST(self):
         if self.path == '/save_d4.php':
             self.save_xml()
+        elif self.path == '/save_file':
+            self.save_file()
         elif self.path == '/validate_d4.php':
             self.validate_xml()
         elif self.path == '/clear_cache':
@@ -91,6 +93,43 @@ class MIDINameHandler(http.server.SimpleHTTPRequestHandler):
             
         except Exception as e:
             self.send_error(500, f"Error saving XML: {str(e)}")
+    
+    def save_file(self):
+        try:
+            import json
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length).decode()
+            
+            # Parse JSON data
+            data = json.loads(post_data)
+            file_path = data.get('file_path')
+            xml_content = data.get('xml_content')
+            
+            if not file_path or not xml_content:
+                self.send_error(400, "Missing file_path or xml_content")
+                return
+            
+            # Create backup
+            import shutil
+            from datetime import datetime
+            backup_name = f'{file_path}.backup.{datetime.now().strftime("%Y-%m-%d-%H-%M-%S")}'
+            shutil.copy(file_path, backup_name)
+            
+            # Save new content
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write(xml_content)
+            
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            self.wfile.write(json.dumps({
+                'success': True, 
+                'backup': backup_name,
+                'file_path': file_path
+            }).encode())
+            
+        except Exception as e:
+            self.send_error(500, f"Error saving file: {str(e)}")
     
     def validate_xml(self):
         try:
